@@ -1,0 +1,353 @@
+{{!< default}}
+<script src="https://cdn.airmap.io/js/maps/v2.0/airmap.map.min.js"></script>
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.31.0/mapbox-gl.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.31.0/mapbox-gl.css' rel='stylesheet' />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.0.1/mapbox-gl-geocoder.js'></script>
+<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.0.1/mapbox-gl-geocoder.css' type='text/css' />
+<link rel="stylesheet" type="text/css" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v0.16.0/mapbox-gl-draw.css" />
+<script type="text/javascript" src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v0.16.0/mapbox-gl-draw.js"></script>
+<script type="text/javascript" src="https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js"></script>
+{{! The comment above "< default" means - insert everything in this file into
+    the {body} of the default.hbs template, which contains our header/footer. }}
+{{! Everything inside the #post tags pulls data from the post }}
+{{#post}}
+    <div class="jumbotron " style="background: linear-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.2)), {{#if image}}url({{image}}){{else}}url({{@blog.cover}}){{/if}}; background-position: center; background-size: cover">
+        <div class="jumbo-wrapper">
+            <h1 class="shadow">{{title}}</h1>{{!-- <strong>{{@blog.description}}
+            </strong> --}}
+        </div>
+    </div>
+    <!--<div class="jumbotron"><div class="container">
+    
+    <div class="row">
+    
+        <div class="col-md-3">
+            <img class="img-responsive" src="\images\Europe.jpg">
+        </div>
+        <div class="col-md-9">
+            <h1>Brandon Brown</h1>
+        </div>
+    
+    </div>
+
+</div></div>-->
+    <div class="container" role="document">
+        <main class="content" role="main">
+            <article class="{{post_class}} post-wrap" style="margin-top: -70px">
+                <section class="post-content">
+                    <header class="post-header">
+                        {{!-- <h1 class="post-title">{{title}}</h1> --}}
+                        <section class="post-meta" style="margin-bottom:15px; text-align: center; ">
+                            <div id="airspace_rules" class="btn-group" data-toggle="buttons">
+                                <label id="btnRec" class="btn btn-primary active">
+                                    <input type="radio" name="rec" autocomplete="off" checked> Recreational
+                                </label>
+                                <label id="btnCom" class="btn btn-primary">
+                                    <input type="radio" name="com" autocomplete="off"> Commercial
+                                </label>
+                            </div>
+                        </section>
+                    </header>
+                    <div id="divRec">
+                        <h1>Recreational</h1>
+                        <p>This view shows the airspace for hobby pilots. The map primarily shows airspace within 5 miles of an airport, but also includes Special Use (Restricted/Prohibited), TFRs, National Parks, and other advisories. Pilots that would like to fly within 5 miles of an airport must first notify the airport.</p>
+                    </div>
+                    <div id="divCom">
+                        <h1>Commercial (Part 107)</h1>
+                        <p>This view shows the airspace for commerical pilots operating under Part 107 rules. The map primarily shows controlled airspace, but also includes Special Use (Restricted/Prohibited), TFRs, National Parks, and other advisories. Pilots that would like to fly in controlled airspace must first receive ATC authorization.</p>
+                    </div>
+                </section>
+            </article>
+            <div id='map'></div>
+            <div id='status-bar'>Status</div>
+            <div id="advisory-div">Advisories</div>
+        </main>
+        <script>
+        function titleCase(str) {
+            var lowercase = str.toLowerCase();
+            var arr = lowercase.split(' ');
+            for (var i = 0; i < arr.length; i++) {
+                arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
+            }
+            return arr.join(' ');
+        }
+
+        var AIRMAP_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVkZW50aWFsX2lkIjoiY3JlZGVudGlhbHwzM2FLRzhlVDVvV0VvQWM2TTJKcU9UekF4NWFYIiwiYXBwbGljYXRpb25faWQiOiJhcHBsaWNhdGlvbnxYbHdQUWFxdU9wdjBuTFMybUJOT0RUbjM4TEdlIiwib3JnYW5pemF0aW9uX2lkIjoiZGV2ZWxvcGVyfExsMjJSN29meDI0QUJ2VEp2MEpHMmhXZERBeHkiLCJpYXQiOjE0ODE2NTY2MjB9.PXCMS60SngBUljZGf7hik3DJrYhCFabpaRNxhzyaQvw'
+        var MAPBOX_API_KEY = 'pk.eyJ1IjoiYWlybWFwIiwiYSI6InhIMVMxeHcifQ.-5KWsUSR1cTbqUhTRpGkgQ';
+
+        var layers_rec = ['airports_recreational', 'sua_prohibited', 'sua_restricted', 'national_parks', 'noaa', 'hospitals', 'power_plants', 'tfrs', 'wildfires'];
+
+        var layers_com = ['class_b', 'class_c', 'class_d', 'class_e0', 'sua_prohibited', 'sua_restricted', 'national_parks', 'noaa', 'hospitals', 'power_plants', 'tfrs', 'wildfires'];
+
+        var types = ['airport', 'controlled_airspace', 'special_use_airspace', 'tfr', 'wildfire', 'power_plant', 'prison', 'park', 'hospital'];
+
+        //var layerString = layers.toString().split(',');
+
+        var config = {
+            "airmap": {
+                "api_key": AIRMAP_API_KEY
+            },
+            "auth0": {
+                "client_id": null,
+                "callback_url": null
+            },
+            "mapbox": {
+                "access_token": MAPBOX_API_KEY
+            }
+        }
+
+        var map = new Airmap.Map(config, {
+            container: 'map',
+            center: [33.9416, -118.4085],
+            zoom: 10,
+            theme: 'standard'
+                /* refer to the docs for a comprehensive list of options */
+        });
+
+
+
+        $("#btnRec").click(function() {
+            //console.log("rec")
+
+            map.setLayers(layers_rec)
+            $("#divRec").show();
+            $("#divCom").hide();
+                //console.log(map.getLayers())
+        })
+        $("#btnCom").click(function() {
+            //console.log("com")
+
+            map.setLayers(layers_com)
+            $("#divRec").hide();
+            $("#divCom").show();
+                //console.log(map.getLayers())
+        })
+
+
+
+        var geocoder = new MapboxGeocoder({
+            accessToken: MAPBOX_API_KEY //map.mapboxgl.accessToken
+        });
+
+        map.addControl(geocoder);
+
+        map.addControl(new mapboxgl.NavigationControl());
+
+        var Draw = new MapboxDraw();
+
+        map.addControl(Draw)
+
+        map.on('draw.update', function(e) {
+
+            var event = e
+            var features = event.features
+            var feature = features[0]
+
+            var geo = feature.geometry
+
+            console.log(JSON.stringify(geo))
+
+            var coords = geo.coordinates
+
+            var firstcoord = coords[0]
+
+            var firstpoint = firstcoord[0]
+
+            var lat = firstpoint[1]
+            var lon = firstpoint[0]
+
+
+
+
+            $.ajax({
+                url: "https://api.airmap.com/status/v2/polygon",
+                headers: {
+                    "X-API-KEY": "E8D05ADD-DF71-3D14-3794-93FAF8ED8F59"
+                },
+                type: "get",
+                data: {
+                    latitude: lat,
+                    longitude: lon,
+                    types: types.join(),
+                    geometry: JSON.stringify(geo)
+                },
+                success: function(res) {
+
+                    var color = res.data.advisory_color
+
+                    if (color == "red") {
+                        document.getElementById('status-bar').innerHTML = "Flight Strictly Regulated"
+                        document.getElementById('status-bar').style.background = "#E74C3C"
+                    } else if (color == "yellow") {
+                        document.getElementById('status-bar').innerHTML = "Advisories"
+                        document.getElementById('status-bar').style.background = "#F1C40F"
+                    } else {
+                        document.getElementById('status-bar').innerHTML = "No Known Advisories"
+                        document.getElementById('status-bar').style.background = "#2ECC71"
+                    }
+
+
+                    var advisories = res.data.advisories
+
+                    div = document.getElementById('advisory-div')
+
+                    //div.style.borderTop = '1px solid rgba(0, 0, 0, 0.12)';
+                    //div.style.borderBottom = '1px solid rgba(0, 0, 0, 0.12)';
+
+                    div.innerHTML = ""
+
+                    types.forEach(t => {
+
+
+
+                        t_advisories = advisories.filter(x => x.type == t)
+
+                        if (t_advisories.length == 0) {
+                            return
+                        }
+
+                        if (t === 'tfr') {
+                            t = 'Temporary Flight Restrictions';
+                        }
+
+                        div.innerHTML += '<h4>' + titleCase(t.replace(/_/g, ' ')) + '</h4>'
+
+                        list = document.createElement('span')
+
+                        div.appendChild(list)
+
+                        t_advisories.forEach(a => {
+                            var c = "G"
+                            if (a.color == "red") {
+                                c = "R"
+                            } else if (a.color == "yellow") {
+                                c = "Y"
+                            }
+
+
+
+                            list.innerHTML += '<div>' + '[' + c + '] ' + titleCase(a.name) + ' - ' + a.distance + ' m</div>'
+                        })
+
+                    })
+
+                },
+                error: function(err) {
+                    alert(err.name + ":" + err.message)
+                }
+            })
+
+        })
+
+        map.on('load', function() {
+
+            map.setLayers(layers_rec)
+            $("#divCom").hide();
+
+            map.mapboxgl.addSource('single-point', {
+                "type": "geojson",
+                "data": {
+                    "type": "FeatureCollection",
+                    "features": []
+                }
+            });
+
+            map.mapboxgl.addLayer({
+                "id": "point",
+                "source": "single-point",
+                "type": "circle",
+                "paint": {
+                    "circle-radius": 10,
+                    "circle-color": "#007cbf"
+                }
+            });
+
+            // Listen for the `geocoder.input` event that is triggered when a user
+            // makes a selection and add a symbol that matches the result.
+            geocoder.on('result', function(ev) {
+                map.getSource('single-point').setData(ev.result.geometry);
+
+                var lat = ev.result.center[1]
+                var lon = ev.result.center[0]
+
+                $.ajax({
+                    url: "https://api.airmap.com/status/v2/point",
+                    headers: {
+                        "X-API-KEY": "E8D05ADD-DF71-3D14-3794-93FAF8ED8F59"
+                    },
+                    type: "get",
+                    data: {
+                        latitude: lat,
+                        longitude: lon,
+                        types: types.join()
+                    },
+                    success: function(res) {
+
+                        var color = res.data.advisory_color
+
+                        if (color == "red") {
+                            document.getElementById('status-bar').innerHTML = "Flight Strictly Regulated"
+                            document.getElementById('status-bar').style.background = "#E74C3C"
+                        } else if (color == "yellow") {
+                            document.getElementById('status-bar').innerHTML = "Advisories"
+                            document.getElementById('status-bar').style.background = "#F1C40F"
+                        } else {
+                            document.getElementById('status-bar').innerHTML = "No Known Advisories"
+                            document.getElementById('status-bar').style.background = "#2ECC71"
+                        }
+
+
+                        var advisories = res.data.advisories
+
+                        div = document.getElementById('advisory-div')
+
+                        //div.style.borderTop = '1px solid rgba(0, 0, 0, 0.12)';
+                        //div.style.borderBottom = '1px solid rgba(0, 0, 0, 0.12)';
+
+                        div.innerHTML = ""
+
+                        types.forEach(t => {
+
+
+
+                            t_advisories = advisories.filter(x => x.type == t)
+
+                            if (t_advisories.length == 0) {
+                                return
+                            }
+
+                            if (t === 'tfr') {
+                                t = 'Temporary Flight Restrictions';
+                            }
+
+                            div.innerHTML += '<h4>' + titleCase(t.replace(/_/g, ' ')) + '</h4>'
+
+                            list = document.createElement('span')
+
+                            div.appendChild(list)
+
+                            t_advisories.forEach(a => {
+                                var c = "G"
+                                if (a.color == "red") {
+                                    c = "R"
+                                } else if (a.color == "yellow") {
+                                    c = "Y"
+                                }
+
+
+
+                                list.innerHTML += '<div>' + '[' + c + '] ' + titleCase(a.name) + ' - ' + a.distance + ' m</div>'
+                            })
+
+                        })
+
+                    },
+                    error: function(err) {
+                        alert(err.name + ":" + err.message)
+                    }
+                });
+            });
+        })
+        </script>
+{{/post}}

@@ -1,125 +1,122 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     {{! Document Settings }}
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-    {{! Page Meta }}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />{{! Page Meta }}
     <title>{{meta_title}}</title>
     <meta name="description" content="{{meta_description}}" />
-
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <link rel="shortcut icon" href="{{asset "/favicon.ico"}}">
-
-    {{! Styles'n'Scripts }}
+    <link rel="shortcut icon" href="{{asset "/favicon.ico"}}">{{! Styles'n'Scripts }}
     <link rel="stylesheet" type="text/css" href="{{asset "css/style.css"}}" />
-	<link rel="stylesheet" type="text/css" href="{{asset "css/bootstrap-social.css"}}" />
-	<link rel="stylesheet" type="text/css" href="{{asset "css/bootstrap.min.css"}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset "css/bootstrap-social.css"}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset "css/bootstrap.min.css"}}" />
     <link rel="stylesheet" type="text/css" href="{{asset "css/reset.css"}}" />
     <link rel="stylesheet" type="text/css" href="{{asset "css/font-awesome.min.css"}}" />
-    
-    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
-    
-
-    {{! Ghost outputs important style and meta data with this tag }}
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>{{! Ghost outputs important style and meta data with this tag }}
     {{ghost_head}}
 </head>
 
 <body>
-<header id="menu" class="navbar nav fixed" role="banner">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle border-white" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar back-white"></span>
-        <span class="icon-bar back-white"></span>
-        <span class="icon-bar back-white"></span>
-      </button>
-      <a class="navbar-brand" href="{{@blog.url}}/">{{@blog.title}}</a>
-    </div>
-
-    <nav class="collapse navbar-collapse" role="navigation">
-      {{ navigation }}
-    </nav>
-  </div>
-</header>
-
+    <header id="menu" class="navbar nav fixed" role="banner">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle border-white" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar back-white"></span>
+                    <span class="icon-bar back-white"></span>
+                    <span class="icon-bar back-white"></span>
+                </button>
+                <a class="navbar-brand" href="{{@blog.url}}/">{{@blog.title}}</a>
+            </div>
+            <nav class="collapse navbar-collapse" role="navigation">
+                {{ navigation }}
+            </nav>
+        </div>
+    </header>
     {{! Everything else gets inserted here }}
     {{{body}}}
-
-</div>
-
-    <footer>
-      <div class="footer">
-        <div class="container">
-			<div class="footer-top">
-				<div class="row">
-					<div class="col-md-4">
-						<div class="widget">
-							<h4 class="title">About</h4>
-							<div class="content">
-								This personal website was made using the <a href="https://ghost.org/">Ghost Blog</a> with my own custom theme <a href="https://github.com/7200rpm/Tranquility">Tranquility</a>. Check them both out!
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4">
-                        <div class="widget">
-							<h4 class="title">Resources</h4>
-							<div class="content">
-								At some point I will add useful resources here.
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4">
-				        <div  class="widget">
-	<h4 class="title">Subscribe</h4>
-                            <p>Subscribe to my monthly newsletter to get software development tips and other ramblings. </p>
-<!-- Begin MailChimp Signup Form -->
-<link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
-<style type="text/css">
-	#mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; padding: 0; }
-	/* Add your own MailChimp form style overrides in your site stylesheet or in this style block.
-	   We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
-</style>
-<div id="mc_embed_signup">
-<form action="//asyncwriter.us12.list-manage.com/subscribe/post?u=23dcc64542c8fab9b6ce36264&amp;id=dbe62fc00a" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div id="mc_embed_signup_scroll">
-	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
-    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_23dcc64542c8fab9b6ce36264_dbe62fc00a" tabindex="-1" value=""></div>
-    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
-    </div>
-</form>
-</div>
-
-<!--End mc_embed_signup-->
-</div>
-					</div>
-				</div>
-			</div>
-			<div class="footer-bottom">
-				<div class="row">
-				  <div class="col-lg-12">
-				  <hr />
-				  <section class="copyright">Copyright &copy; <a href="{{@blog.url}}" title="{{@blog.title}}">{{@blog.title}}</a> - All Rights Reserved.</section>
-			   </div>
-			</div>
-        
-     </div>
-   </div>
- </div>
-    </footer>
-
-<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
-<script>window.jQuery || document.write('<script src="{{asset "js/jquery.min.js"}}"><\/script>')</script>
-<script type="text/javascript" src="{{asset "js/bootstrap.min.js"}}"></script>
-<script type="text/javascript" src="{{asset "js/script.js"}}"></script>
-
-	  {{! The main JavaScript file for Bootstrap Skeleton }}
-	  {{> analytics}}
-
+        </div>
+        <footer>
+            <div class="footer">
+                <div class="container">
+                    <div class="footer-top">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="widget">
+                                    <h4 class="title">About</h4>
+                                    <div class="content">
+                                        Top Down Pixel exists to help drone owners take amazing photos from the air while flying a drone safely and efficiently. Made using the <a href="https://ghost.org/">Ghost Blog</a> with my own custom theme <a href="https://github.com/7200rpm/Tranquility">Tranquility</a>. Check them both out!
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="widget">
+                                    <h4 class="title">Resources</h4>
+                                    <div class="content">
+                                        <ul>
+                                            <li><a href="http://knowbeforeyoufly.org/">Know Before You Fly</a></li>
+                                            <li><a href="https://www.faa.gov/news/fact_sheets/news_story.cfm?newsId=20516">FAA Part 107 Fact Sheet</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="widget">
+                                    <h4 class="title">Subscribe</h4>
+                                    <p>Subscribe to my monthly newsletter to get drone and photography tips. Absolutely no spam will be sent - ever. </p>
+                                    <!-- Begin MailChimp Signup Form -->
+                                    <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+                                    <style type="text/css">
+                                    #mc_embed_signup {
+                                        background: #fff;
+                                        clear: left;
+                                        font: 14px Helvetica, Arial, sans-serif;
+                                        padding: 0;
+                                    }
+                                    /* Add your own MailChimp form style overrides in your site stylesheet or in this style block.
+       We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
+                                    </style>
+                                    <div id="mc_embed_signup">
+                                        <form action="//asyncwriter.us12.list-manage.com/subscribe/post?u=23dcc64542c8fab9b6ce36264&amp;id=dbe62fc00a" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+                                            <div id="mc_embed_signup_scroll">
+                                                <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+                                                <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                                                <div style="position: absolute; left: -5000px;" aria-hidden="true">
+                                                    <input type="text" name="b_23dcc64542c8fab9b6ce36264_dbe62fc00a" tabindex="-1" value="">
+                                                </div>
+                                                <div class="clear">
+                                                    <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <!--End mc_embed_signup-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer-bottom">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <hr />
+                                <section class="copyright">Copyright &copy; <a href="{{@blog.url}}" title="{{@blog.title}}">{{@blog.title}}</a> - All Rights Reserved.</section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
+        <script>
+        window.jQuery || document.write('<script src="{{asset "js/jquery.min.js"}}"><\/script>')
+        </script>
+        <script type="text/javascript" src="{{asset "js/bootstrap.min.js"}}"></script>
+        <script type="text/javascript" src="{{asset "js/script.js"}}"></script>
+        {{! The main JavaScript file for Bootstrap Skeleton }}
+        {{> analytics}}
 </body>
+
 </html>
