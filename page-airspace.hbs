@@ -60,8 +60,8 @@
                 </section>
             </article>
             <div id='map'></div>
-            <div id='status-bar'>Status</div>
-            <div id="advisory-div">Advisories</div>
+{{!--             <div id='status-bar'>Status</div>
+            <div id="advisory-div">Advisories</div> --}}
         </main>
         <script>
         function titleCase(str) {
@@ -138,216 +138,14 @@
 
         map.addControl(Draw)
 
-        map.on('draw.update', function(e) {
-
-            var event = e
-            var features = event.features
-            var feature = features[0]
-
-            var geo = feature.geometry
-
-            console.log(JSON.stringify(geo))
-
-            var coords = geo.coordinates
-
-            var firstcoord = coords[0]
-
-            var firstpoint = firstcoord[0]
-
-            var lat = firstpoint[1]
-            var lon = firstpoint[0]
-
-
-
-
-            $.ajax({
-                url: "https://api.airmap.com/status/v2/polygon",
-                headers: {
-                    "X-API-KEY": "E8D05ADD-DF71-3D14-3794-93FAF8ED8F59"
-                },
-                type: "get",
-                data: {
-                    latitude: lat,
-                    longitude: lon,
-                    types: types.join(),
-                    geometry: JSON.stringify(geo)
-                },
-                success: function(res) {
-
-                    var color = res.data.advisory_color
-
-                    if (color == "red") {
-                        document.getElementById('status-bar').innerHTML = "Flight Strictly Regulated"
-                        document.getElementById('status-bar').style.background = "#E74C3C"
-                    } else if (color == "yellow") {
-                        document.getElementById('status-bar').innerHTML = "Advisories"
-                        document.getElementById('status-bar').style.background = "#F1C40F"
-                    } else {
-                        document.getElementById('status-bar').innerHTML = "No Known Advisories"
-                        document.getElementById('status-bar').style.background = "#2ECC71"
-                    }
-
-
-                    var advisories = res.data.advisories
-
-                    div = document.getElementById('advisory-div')
-
-                    //div.style.borderTop = '1px solid rgba(0, 0, 0, 0.12)';
-                    //div.style.borderBottom = '1px solid rgba(0, 0, 0, 0.12)';
-
-                    div.innerHTML = ""
-
-                    types.forEach(t => {
-
-
-
-                        t_advisories = advisories.filter(x => x.type == t)
-
-                        if (t_advisories.length == 0) {
-                            return
-                        }
-
-                        if (t === 'tfr') {
-                            t = 'Temporary Flight Restrictions';
-                        }
-
-                        div.innerHTML += '<h4>' + titleCase(t.replace(/_/g, ' ')) + '</h4>'
-
-                        list = document.createElement('span')
-
-                        div.appendChild(list)
-
-                        t_advisories.forEach(a => {
-                            var c = "G"
-                            if (a.color == "red") {
-                                c = "R"
-                            } else if (a.color == "yellow") {
-                                c = "Y"
-                            }
-
-
-
-                            list.innerHTML += '<div>' + '[' + c + '] ' + titleCase(a.name) + ' - ' + a.distance + ' m</div>'
-                        })
-
-                    })
-
-                },
-                error: function(err) {
-                    alert(err.name + ":" + err.message)
-                }
-            })
-
-        })
+        
 
         map.on('load', function() {
 
             map.setLayers(layers_rec)
             $("#divCom").hide();
 
-            map.mapboxgl.addSource('single-point', {
-                "type": "geojson",
-                "data": {
-                    "type": "FeatureCollection",
-                    "features": []
-                }
-            });
-
-            map.mapboxgl.addLayer({
-                "id": "point",
-                "source": "single-point",
-                "type": "circle",
-                "paint": {
-                    "circle-radius": 10,
-                    "circle-color": "#007cbf"
-                }
-            });
-
-            // Listen for the `geocoder.input` event that is triggered when a user
-            // makes a selection and add a symbol that matches the result.
-            geocoder.on('result', function(ev) {
-                map.getSource('single-point').setData(ev.result.geometry);
-
-                var lat = ev.result.center[1]
-                var lon = ev.result.center[0]
-
-                $.ajax({
-                    url: "https://api.airmap.com/status/v2/point",
-                    headers: {
-                        "X-API-KEY": "E8D05ADD-DF71-3D14-3794-93FAF8ED8F59"
-                    },
-                    type: "get",
-                    data: {
-                        latitude: lat,
-                        longitude: lon,
-                        types: types.join()
-                    },
-                    success: function(res) {
-
-                        var color = res.data.advisory_color
-
-                        if (color == "red") {
-                            document.getElementById('status-bar').innerHTML = "Flight Strictly Regulated"
-                            document.getElementById('status-bar').style.background = "#E74C3C"
-                        } else if (color == "yellow") {
-                            document.getElementById('status-bar').innerHTML = "Advisories"
-                            document.getElementById('status-bar').style.background = "#F1C40F"
-                        } else {
-                            document.getElementById('status-bar').innerHTML = "No Known Advisories"
-                            document.getElementById('status-bar').style.background = "#2ECC71"
-                        }
-
-
-                        var advisories = res.data.advisories
-
-                        div = document.getElementById('advisory-div')
-
-                        //div.style.borderTop = '1px solid rgba(0, 0, 0, 0.12)';
-                        //div.style.borderBottom = '1px solid rgba(0, 0, 0, 0.12)';
-
-                        div.innerHTML = ""
-
-                        types.forEach(t => {
-
-
-
-                            t_advisories = advisories.filter(x => x.type == t)
-
-                            if (t_advisories.length == 0) {
-                                return
-                            }
-
-                            if (t === 'tfr') {
-                                t = 'Temporary Flight Restrictions';
-                            }
-
-                            div.innerHTML += '<h4>' + titleCase(t.replace(/_/g, ' ')) + '</h4>'
-
-                            list = document.createElement('span')
-
-                            div.appendChild(list)
-
-                            t_advisories.forEach(a => {
-                                var c = "G"
-                                if (a.color == "red") {
-                                    c = "R"
-                                } else if (a.color == "yellow") {
-                                    c = "Y"
-                                }
-
-
-
-                                list.innerHTML += '<div>' + '[' + c + '] ' + titleCase(a.name) + ' - ' + a.distance + ' m</div>'
-                            })
-
-                        })
-
-                    },
-                    error: function(err) {
-                        alert(err.name + ":" + err.message)
-                    }
-                });
-            });
+            
         })
         </script>
 {{/post}}

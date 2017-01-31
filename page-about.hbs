@@ -3,7 +3,6 @@
     the {body} of the default.hbs template, which contains our header/footer. }}
 {{! Everything inside the #post tags pulls data from the post }}
 {{#post}}
-
     <div class="jumbotron " style="background: linear-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.2)), {{#if image}}url({{image}}){{else}}url({{@blog.cover}}){{/if}}; background-position: center; background-size: cover">
         <div class="jumbo-wrapper">
             <h1 class="shadow">{{title}}</h1>{{!-- <strong>{{@blog.description}}
@@ -41,5 +40,5 @@
                 {{> "sidebar"}}
             </div>
         </div>
-        </div>
+    </div>
 {{/post}}
