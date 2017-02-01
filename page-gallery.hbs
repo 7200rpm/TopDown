@@ -1,0 +1,44 @@
+{{!< default}}
+{{! The comment above "< default" means - insert everything in this file into
+    the {body} of the default.hbs template, which contains our header/footer. }}
+{{! Everything inside the #post tags pulls data from the post }}
+{{#post}}
+    <div class="jumbotron " style="background: linear-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.2)), {{#if image}}url({{image}}){{else}}url({{@blog.cover}}){{/if}}; background-position: center; background-size: cover">
+        <div class="jumbo-wrapper">
+            <h1 class="shadow">{{title}}</h1>{{!-- <strong>{{@blog.description}}
+            </strong> --}}
+        </div>
+    </div>
+    <!--<div class="jumbotron"><div class="container">
+    
+    <div class="row">
+    
+        <div class="col-md-3">
+            <img class="img-responsive" src="\images\Europe.jpg">
+        </div>
+        <div class="col-md-9">
+            <h1>Brandon Brown</h1>
+        </div>
+    
+    </div>
+
+</div></div>-->
+    <div class="container" role="document">
+        <div class="row">
+            <div class="col-xs-12 col-sm-8 col-md-9 col-lg-9">
+                <main class="content" role="main">
+                    <article class="{{post_class}} post-wrap" style="margin-top: -70px">
+                        {{!-- <img class="img-responsive" src="\images\Europe.jpg"> --}}
+                        <section class="post-content">
+                            {{content}}
+                            <footer class="post-footer">
+                        </section>
+                    </article>
+                </main>
+            </div>
+            <div class="col-xs-12 col-sm-4 col-md-3 col-lg-3 sidebar">
+                {{> "sidebar"}}
+            </div>
+        </div>
+    </div>
+{{/post}}
