@@ -1,3 +1,12 @@
+p{
+  margin: 0 0 1.75em 0;
+}
+
+body{
+  letter-spacing: 0.01rem;
+  color: #3A4145;
+}
+
 .post-wrap {
 	background-color: white;
 	position: relative;
@@ -29,6 +38,13 @@
     max-width: 100%;
     height: auto;
 
+}
+
+.post-date{
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  white-space: nowrap;
 }
 
 div.authorimage {
