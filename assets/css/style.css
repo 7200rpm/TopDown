@@ -255,3 +255,14 @@ background-color: white;
         z-index: 1000;
         background: #ddd;
     }
+
+    .icon-twitter:before {
+    content: "\f602";
+    font-size: 1.1em;
+}
+.icon-google-plus:before {
+    content: "\f603";
+}
+.icon-facebook:before {
+    content: "\f604";
+}

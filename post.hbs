@@ -21,9 +21,18 @@
                             <header class="post-header">
                                 {{!-- <h1 class="post-title">{{title}}</h1> --}}
                                 <section class="post-meta" style="margin-bottom:15px;">
-                                By {{author}} on
+                                    By {{author}} on
                                     <time class="post-date" datetime="{{date format='YYYY-MM-DD'}}">{{date format="DD MMMM YYYY"}}</time>
-                                    {{!-- {{tags prefix=" in "}} --}}
+                                    <div style="float: right">
+                                                                        <a class="twitter-share-button" data-size="large" href="https://twitter.com/intent/tweet?text={{encode title}}&amp;url={{url absolute="true"}}" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                                        <span class="hidden">Twitter</span>
+                                    </a>
+                                    </div>
+
+                                    {{!-- {{tags prefix=" in "}}
+                                    --}} </section>
+                                <section class="share">
+                                    
                                 </section>
                             </header>
                             {{content}}
@@ -45,7 +54,7 @@
                                 </section>
                                 {{/author}} --}} {{> disqus }}
                             </footer>
-                        </section>
+                            </section>
                     </article>
                 </main>
             </div>
